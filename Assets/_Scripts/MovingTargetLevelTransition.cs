@@ -47,8 +47,11 @@ public class MovingTargetLevelTransition : MonoBehaviour, IHittable
         {
             rb.isKinematic = false;
             stopped = true;
-            SceneManager.LoadScene("ArcherySceneL1");
+            Debug.Log("GetHit called, health: " + health);
+            
         }
+        Debug.Log("Outside of If GetHit called, health: " + health);
+        SceneManager.LoadScene("ArcherySceneL1");
     }
 
     private void FixedUpdate()

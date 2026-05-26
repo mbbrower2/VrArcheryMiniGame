@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MovingTarget : MonoBehaviour, IHittable
 {
@@ -46,7 +47,11 @@ public class MovingTarget : MonoBehaviour, IHittable
         {
             rb.isKinematic = false;
             stopped = true;
+            Debug.Log("GetHit called, health: " + health);
+            SceneManager.LoadScene("ArcherySceneL1");
         }
+        Debug.Log("Outside of If GetHit called, health: " + health);
+        SceneManager.LoadScene("ArcherySceneL1");
     }
 
     private void FixedUpdate()
