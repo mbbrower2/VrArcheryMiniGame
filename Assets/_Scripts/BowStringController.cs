@@ -34,6 +34,7 @@ public class BowStringController : MonoBehaviour
     private void Awake()
     {
         interactable = midPointGrabObject.GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+        Debug.Log("BowStringController running on: " + gameObject.name, this);
     }
 
     private void Start()

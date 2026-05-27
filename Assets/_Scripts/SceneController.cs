@@ -21,5 +21,10 @@ public class SceneController : MonoBehaviour
     {
         SceneManager.LoadSceneAsync(sceneName);
     }
+
+    public void LoadFirstScene()
+    {
+        SceneManager.LoadSceneAsync("ArcherySceneL2");
+    }
     
 }
