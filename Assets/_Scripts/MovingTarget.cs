@@ -7,24 +7,28 @@ public class MovingTarget : MonoBehaviour, IHittable
 {
     private Rigidbody rb;
     private bool stopped = false;
-
     private Vector3 nextposition;
     private Vector3 originPosition;
 
-    [SerializeField]
-    private int health = 1;
-
-    [SerializeField]
-    private AudioSource audioSource;
-
-    [SerializeField]
-    private float arriveThreshold, movementRadius = 2, speed = 1;
+    [SerializeField] private int health = 1;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private float arriveThreshold, movementRadius = 2, speed = 1;
+    [SerializeField] private bool isMoving = true;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         originPosition = transform.position;
-        nextposition = GetNewMovementPosition();
+
+        if (isMoving)
+            nextposition = GetNewMovementPosition();
+        else
+            stopped = true;
+    }
+
+    private void Start()
+    {
+        TargetManager.Instance.RegisterTarget();
     }
 
     private Vector3 GetNewMovementPosition()
@@ -43,28 +47,45 @@ public class MovingTarget : MonoBehaviour, IHittable
     public void GetHit()
     {
         health--;
-        if(health <= 0)
+
+        if (health <= 0)
         {
             rb.isKinematic = false;
             stopped = true;
-            Debug.Log("GetHit called, health: " + health);
-            SceneManager.LoadScene("ArcherySceneL1");
+            Debug.Log("ABCD Debug: Get Hit Triggered called report down health 0");
+            TargetManager.Instance.ReportTargetDown();
+            return;
         }
-        Debug.Log("Outside of If GetHit called, health: " + health);
-        SceneManager.LoadScene("ArcherySceneL1");
+
+        Debug.Log("ABCD Debug: Get Hit Triggered called report down health not 0");
     }
 
     private void FixedUpdate()
     {
         if (stopped == false)
         {
-            if(Vector3.Distance(transform.position,nextposition) < arriveThreshold)
+            if (Vector3.Distance(transform.position, nextposition) < arriveThreshold)
             {
                 nextposition = GetNewMovementPosition();
             }
 
             Vector3 direction = nextposition - transform.position;
             rb.MovePosition(transform.position + direction.normalized * Time.fixedDeltaTime * speed);
+        }
+    }
+
+    public void SetMoving(bool moving)
+    {
+        isMoving = moving;
+
+        if (isMoving)
+        {
+            stopped = false;
+            nextposition = GetNewMovementPosition();
+        }
+        else
+        {
+            stopped = true;
         }
     }
 }
