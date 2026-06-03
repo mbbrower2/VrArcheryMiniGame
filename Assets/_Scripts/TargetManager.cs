@@ -19,17 +19,14 @@ public class TargetManager : MonoBehaviour
     public void RegisterTarget()
     {
         remainingTargets++;
-        Debug.Log("ABCD Debug: Register Target called, total: " + remainingTargets);
     }
 
     public void ReportTargetDown()
     {
         remainingTargets--;
-        Debug.Log("ABCD Debug: Target Down called, remaining: " + remainingTargets);
 
         if (remainingTargets <= 0)
         {
-            Debug.Log("ABCD Debug: Load next scene");
             SceneManager.LoadScene(nextSceneName);
         }
     }

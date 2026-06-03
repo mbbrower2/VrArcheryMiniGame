@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class MovingTarget : MonoBehaviour, IHittable
 {
@@ -14,6 +15,7 @@ public class MovingTarget : MonoBehaviour, IHittable
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private float arriveThreshold, movementRadius = 2, speed = 1;
     [SerializeField] private bool isMoving = true;
+    [SerializeField] float targetScoreValue;
 
     private void Awake()
     {
@@ -44,7 +46,7 @@ public class MovingTarget : MonoBehaviour, IHittable
         }
     }
 
-    public void GetHit()
+    public void GetHit(Vector3 hitpoint)
     {
         health--;
 
@@ -52,12 +54,15 @@ public class MovingTarget : MonoBehaviour, IHittable
         {
             rb.isKinematic = false;
             stopped = true;
-            Debug.Log("ABCD Debug: Get Hit Triggered called report down health 0");
+
             TargetManager.Instance.ReportTargetDown();
+            var accuracyScore = CalculateAccuracy(hitpoint);
+            var scoreForTarget = accuracyScore + targetScoreValue;
+            GameManager.Instance.PlayerScored(scoreForTarget);
+
             return;
         }
 
-        Debug.Log("ABCD Debug: Get Hit Triggered called report down health not 0");
     }
 
     private void FixedUpdate()
@@ -72,6 +77,20 @@ public class MovingTarget : MonoBehaviour, IHittable
             Vector3 direction = nextposition - transform.position;
             rb.MovePosition(transform.position + direction.normalized * Time.fixedDeltaTime * speed);
         }
+    }
+
+    public float CalculateAccuracy(Vector3 hitpoint)
+    {
+        var maxDistance = 0.12f;
+        var distanceFromTarget = Vector3.Distance(transform.position, hitpoint);
+
+        // Clamp so misses outside the target always score 0
+        var clampedDistance = Mathf.Clamp(distanceFromTarget, 0f, maxDistance);
+
+        // Invert so bullseye (distance = 0) = 100, edge (distance = max) = 0
+        var score = (1f - (clampedDistance / maxDistance)) * 100f;
+
+        return score;
     }
 
     public void SetMoving(bool moving)
@@ -92,5 +111,5 @@ public class MovingTarget : MonoBehaviour, IHittable
 
 public interface IHittable
 {
-    void GetHit();
+    void GetHit(Vector3 hitpoint);
 }
