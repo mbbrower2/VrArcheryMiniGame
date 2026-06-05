@@ -26,7 +26,7 @@ public class TutorialTarget : MonoBehaviour, IHittable
 
     private void OnCollisionEnter(Collision collision)
     {
-        if ((rb.isKinematic || collision.gameObject.CompareTag("Arrow")) == false)
+        if ((rb.isKinematic || collision.gameObject.CompareTag("Laser")) == false)
         {
             audioSource.Play();
         }
